@@ -11,12 +11,20 @@
 <html>
 <head>
     <meta charset=utf-8 />
-    <link rel="stylesheet" media="screen" href="css/styles.css" >
-    <title>Pictionnary - Inscription</title>
+<link rel="stylesheet" media="screen" href="css/styles.css" >
+<title>Pictionnary - Inscription</title>
 </head>
 <body>
+<?php include("header.php"); ?>
 
 <h2>Inscrivez-vous</h2>
+
+<?php
+if (isset($_GET["erreur"])) {
+    echo "<div><span>".$_GET["erreur"]."</span></div>";
+}
+?>
+
 <form class="inscription" action="req_inscription.php" method="post" name="inscription">
     <!-- c'est quoi les attributs action et method ?
     Rep : action spécifie le fichier php à executer après le clic sur submit
@@ -27,7 +35,11 @@
     <ul>
         <li>
             <label for="email">E-mail :</label>
-            <input type="email" name="email" id="email" autofocus required/>
+            <input type="email" name="email" id="email" autofocus required  value="<?php
+            if (isset($_GET["email"])) {
+                echo $_GET["email"];
+            }
+            ?>"/>
             <!-- ajouter à input l'attribut qui lui donne le focus automatiquement -->
             <!-- ajouter à input l'attribut qui dit que c'est un champs obligatoire -->
             <!-- quelle est la différence entre les attributs name et id ?
@@ -39,9 +51,51 @@
         </li>
         <li>
             <label for="prenom">Prénom :</label>
-            <input type="text" name="prenom" id="prenom" placeholder="Damien" required/>
+            <input type="text" name="prenom" id="prenom" placeholder="Damien"  value="<?php
+            if (isset($_GET["prenom"])) {
+                echo $_GET["prenom"];
+            }
+            ?>" required/>
+        <!-- ajouter à input l'attribut qui dit que c'est un champs obligatoire -->
+        <!-- ajouter à input l'attribut qui donne une indication grisée (placeholder) -->
+        </li>
+        <li>
+            <label for="nom">Nom :</label>
+            <input type="text" name="nom" id="nom" placeholder="Rogé"  value="<?php
+            if (isset($_GET["nom"])) {
+                echo $_GET["nom"];
+            }
+            ?>"/>
             <!-- ajouter à input l'attribut qui dit que c'est un champs obligatoire -->
             <!-- ajouter à input l'attribut qui donne une indication grisée (placeholder) -->
+        </li>
+        <li>
+            <label for="tel">Téléphone :</label>
+            <input type="tel" name="tel" id="tel"  value="<?php
+            if (isset($_GET["tel"])) {
+                echo $_GET["tel"];
+            }
+            ?>"/>
+
+        </li>
+        <li>
+            <label for="website">Site Web :</label>
+            <input type="url" name="website" id="website"  value="<?php
+            if (isset($_GET["website"])) {
+                echo $_GET["website"];
+            }
+            ?>"/>
+
+        </li>
+
+        <li>
+            <label for="sexe">Sexe :</label>
+            <label style="all:initial">Homme</label>
+            <input style="width: 20px;" type="radio" name="sexe" id="sexe" value="h"/>
+            <label style="all:initial;width: 5px;">Femme</label>
+            <input style="width: 20px;" type="radio" name="sexe" id="sexe" value="f"/>
+
+
         </li>
 
         <li>
@@ -84,7 +138,11 @@
         </li>
         <li>
             <label for="birthdate">Date de naissance:</label>
-            <input type="date" name="birthdate" id="birthdate" placeholder="JJ/MM/AAAA" required onchange="computeAge()"/>
+            <input type="date" name="birthdate" id="birthdate" placeholder="JJ/MM/AAAA" required onchange="computeAge()"  value="<?php
+            if (isset($_GET["birthdate"])) {
+                echo $_GET["birthdate"];
+            }
+            ?>"/>
             <script>
                 computeAge = function(e) {
                     try{
@@ -120,13 +178,49 @@
             <!-- à quoi sert l'attribut disabled ?
                 Rep : l'utilisateur ne peut pas modifier la valeur-->
         </li>
+
+        <li>
+            <label for="ville">Ville :</label>
+            <input type="text" name="ville" id="ville"  value="<?php
+            if (isset($_GET["ville"])) {
+                echo $_GET["ville"];
+            }
+            ?>"/>
+
+        </li>
+
+        <li>
+            <label for="taille">Taille :</label>
+            <input type="range" value="1.70" max="2.30" min="1" step="0.01" name="taille" id="taille" oninput="result4.value=parseFloat(taille.value)"  value="<?php
+            if (isset($_GET["taille"])) {
+                echo $_GET["taille"];
+            }
+            ?>"/>
+            <output name="result4">1.70</output>m
+
+        </li>
+
+        <li>
+            <label for="couleur">Couleur préféré :</label>
+            <input type="color" value="#555555" name="couleur" id="couleur"  value="<?php
+            if (isset($_GET["couleur"])) {
+                echo $_GET["couleur"];
+            }
+            ?>"/>
+
+        </li>
+
         <li>
             <label for="profilepicfile">Photo de profil:</label>
             <input type="file" id="profilepicfile" onchange="loadProfilePic(this)"/>
             <!-- l'input profilepic va contenir le chemin vers l'image sur l'ordinateur du client -->
             <!-- on ne veut pas envoyer cette info avec le formulaire, donc il n'y a pas d'attribut name -->
             <span class="form_hint">Choisissez une image.</span>
-            <input type="hidden" name="profilepic" id="profilepic"/>
+            <input type="hidden" name="profilepic" id="profilepic"  value="<?php
+            if (isset($_GET["profilepic"])) {
+                echo "#".$_GET["profilepic"];
+            }
+            ?>"/>
             <!-- l'input profilepic va contenir l'image redimensionnée sous forme d'une data url -->
             <!-- c'est cet input qui sera envoyé avec le formulaire, sous le nom profilepic -->
             <canvas id="preview" width="0" height="0"></canvas>
