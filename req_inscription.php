@@ -11,7 +11,6 @@
 foreach($_POST as $item){
     if($item=="") $item = null;
 }
-echo "POST : ";
 
 $email=stripslashes($_POST['email']);
 $password=stripslashes($_POST['password']);
@@ -32,12 +31,11 @@ $profilepic=stripslashes($_POST['profilepic']);
 
 try {
     // Connect to server and select database.
-    $dbh = new PDO('mysql:host=localhost;dbname=pictionnary', 'test', 'test');
+    $dbh = new PDO('mysql:host=localhost:3306;dbname=pictionnary', 'test', 'test');
 
     // Vérifier si un utilisateur avec cette adresse email existe dans la table.
     // En SQL: sélectionner tous les tuples de la table USERS tels que l'email est égal à $email.
     $sql = $dbh->query("SELECT * FROM USERS WHERE email=\"".$email."\"");
-    print_r($sql->rowCount());
     if ($sql->rowCount()>=1/*est-ce que le nombre de réponses est supérieur ou égal à 1 ?*/) {
         // rediriger l'utilisateur ici, avec tous les paramètres du formulaire plus le message d'erreur
         // utiliser à bon escient la méthode htmlspecialchars http://www.php.net/manual/fr/function.htmlspecialchars.php          // et/ou la méthode urlencode http://php.net/manual/fr/function.urlencode.php

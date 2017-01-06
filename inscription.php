@@ -6,6 +6,7 @@
  * Time: 13:34
  */
 
+ include("header.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,13 +16,12 @@
 <title>Pictionnary - Inscription</title>
 </head>
 <body>
-<?php include("header.php"); ?>
 
 <h2>Inscrivez-vous</h2>
 
 <?php
 if (isset($_GET["erreur"])) {
-    echo "<div><span>".$_GET["erreur"]."</span></div>";
+    echo "<div><span style='font-size:large;color:#ff3e2b'>".$_GET["erreur"]."</span></div>";
 }
 ?>
 

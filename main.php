@@ -1,3 +1,4 @@
+<?php include("header.php"); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +7,6 @@
     <title>Pictionnary - Inscription</title>
 </head>
 <body>
-<?php include("header.php"); ?>
 <div>
     <a href="paint.php">Commencer à dessiner</a>
 </div>
