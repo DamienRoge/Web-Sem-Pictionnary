@@ -24,18 +24,20 @@ try {
         // Utilisateur dans la BDD -> redirect main.php
         // rediriger l'utilisateur ici, avec tous les paramètres du formulaire plus le message d'erreur
         // utiliser à bon escient la méthode htmlspecialchars http://www.php.net/manual/fr/function.htmlspecialchars.php          // et/ou la méthode urlencode http://php.net/manual/fr/function.urlencode.php
-    /*
-        session_start();
-        $_SESSION['email']= $email;
-        $_SESSION['prenom']= $;
 
-        header("Location: main.php");
-*/
         $stmt = $dbh->prepare("SELECT * FROM USERS WHERE email=\"".$email."\" AND password = \"".$password."\"");
         $stmt->execute();
         $row = $stmt->fetch();
-        var_dump($row);
+        session_start();
 
+        $_SESSION['email']= $email;
+        $_SESSION['prenom']= $row["prenom"];
+        $_SESSION['profilepic']= $row["profilepic"];
+        $_SESSION['id']= $row["id"];
+
+
+
+        header("Location: main.php");
     }
     else{
         //Utilisateur pas dans la BDD
