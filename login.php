@@ -41,7 +41,11 @@ include("header.php");
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default">Sign in</button>
+            <button type="submit" class="btn btn-primary">Se connecter</button>
+            <a href="inscription.php">
+                <button type="button" class="btn btn-link">S'inscrire</button>
+            <a href="inscription.php">
+
         </div>
     </div>
 </form>
