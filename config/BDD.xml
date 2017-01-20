@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bdd_infos>
+    <type>mysql</type>
+    <url>localhost</url>
+    <port>3306</port>
+    <dbname>pictionnary</dbname>
+    <user>test</user>
+    <password>test</password>
+</bdd_infos>
