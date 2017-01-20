@@ -1,13 +1,53 @@
 <?php
 // on démarre la session, si l'utilisateur n'est pas connecté alors on redirige vers la page main.php.
-session_start();
-if(!isset($_SESSION['prenom'])) {
-    header("Location: login.php");
+include("header.php");
+
+
+
+/* RECUPERATION DU MOT */
+
+$file_content = file_get_contents('./mots.txt', FILE_USE_INCLUDE_PATH);
+
+$mots_array = explode(", ",$file_content);
+
+$mot = $mots_array[rand(0,count($mots_array))];
+
+
+/* RECUPERATION DE LA LISTE DES JOUEURS*/
+
+try {
+    // Connect to server and select database.
+    $xml_bdd_infos = simplexml_load_file('./config/BDD.xml');
+    $dbh = new PDO($xml_bdd_infos->type.':host='.$xml_bdd_infos->url.':'.$xml_bdd_infos->port.';dbname='.$xml_bdd_infos->dbname, $xml_bdd_infos->user, $xml_bdd_infos->password);
+
+    $stmt = $dbh->prepare("SELECT prenom, nom, id FROM USERS WHERE id<>".$_SESSION['id']);
+
+
+
+
+
+    // on tente d'exécuter la requête SQL, si la méthode renvoie faux alors une erreur a été rencontrée.
+    if (!$stmt->execute()) {
+        echo "PDO::errorInfo():<br/>";
+        $err = $stmt->errorInfo();
+        print_r($err);
+    } else {
+        $joueurs=$stmt->fetchAll();
+
+    }
+} catch (PDOException $e) {
+    print "Erreur !: " . $e->getMessage() . "<br/>";
+    $dbh = null;
+    die();
 }
+
+
+
+
 ?>
 
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset=utf-8 />
     <title>Pictionnary</title>
@@ -24,10 +64,14 @@ if(!isset($_SESSION['prenom'])) {
         var drawingCommands = [];
         //DATA URI du dessin une fois fini
 
+
+
+
         var setColor = function() {
             // on récupère la valeur du champs couleur
             color = document.getElementById('color').value;
             console.log("color:" + color);
+            document.getElementById("pinceau_preview").style.background = color;
         }
 
         var setSize = function() {
@@ -35,6 +79,14 @@ if(!isset($_SESSION['prenom'])) {
             //TODO
             size = sizes[parseInt(document.getElementById('size').value)];
             console.log("la size est:" + size);
+            document.getElementById("pinceau_preview").style.width = size*2+"px";
+            document.getElementById("pinceau_preview").style.height = size*2+"px";
+            console.log("width : "+document.getElementById("pinceau_preview").style.width);
+            console.log("length : "+document.getElementById("pinceau_preview").style.height);
+            document.getElementById("pinceau_preview").style.WebkitBorderRadius =  (size)+"px";
+            document.getElementById("pinceau_preview").style.MozBorderRadius = (size)+"px";
+            document.getElementById("pinceau_preview").style.borderRadius =  (size)+"px";
+
         }
 
         window.onload = function() {
@@ -57,7 +109,8 @@ if(!isset($_SESSION['prenom'])) {
                 command.command="start";
                 command.x=e.x;
                 command.y=e.y;
-                command.color=e.color;
+                command.size = size;
+                command.color=color;
 
                 //...
                 //c'est équivalent à:
@@ -79,6 +132,8 @@ if(!isset($_SESSION['prenom'])) {
             }
 
             var draw = function(e) {
+                console.log("x : "+e.x);
+                console.log("y : " + e.y);
 
                 if(isDrawing) {
                     console.log("x: "+e.x);
@@ -91,14 +146,16 @@ if(!isset($_SESSION['prenom'])) {
                     command.command="draw";
                     command.x=e.x;
                     command.y=e.y;
+
                     drawingCommands.push(command);
 
 
                     var c = document.getElementById( "myCanvas" );
                     var ctx = c.getContext("2d");
 
+
                     ctx.beginPath();
-                    ctx.arc(e.x,e.y,size,0,Math.PI*2,true);
+                    ctx.arc(e.x+emplacement_canvas.left,e.y-emplacement_canvas.top,size,0,Math.PI*2,true);
                     ctx.strokeStyle = color;
                     ctx.fillStyle = color;
                     ctx.fill();
@@ -142,16 +199,24 @@ if(!isset($_SESSION['prenom'])) {
 
 <canvas style=" border:1px solid #428bca;" id="myCanvas"></canvas>
 
+<script>
+    //Emplacement du canvas , permet de compenser la taille du header au moment de tracer le cercle
+    var emplacement_canvas = document.getElementById("myCanvas").getBoundingClientRect();
+</script>
+
+
+<div >Votre mot est <b style="color: red;"><?php echo $mot;?></b></div>
 <form name="tools" action="req_paint.php" method="post">
+    <input type="hidden" id="reponse" name="reponse" value="<?php echo $mot; ?>"/>
     <!--TODO-->
     <!-- ici, insérez un champs de type range avec id="size", pour choisir un entier entre 0 et 4) -->
     <div style="display:block">
         Taille du pinceau :
-        <input  name="d" id="size" value="1" type="range" min="0" max="3" step="1" oninput="
+        <input style="max-width: 200px;display: inline" name="d" id="size" value="1" type="range" min="0" max="3" step="1" oninput="
         result4.value=sizes[parseInt(d.value)];
         setSize();"/>
     <!-- ici, insérez un champs de type color avec id="color", et comme valeur l'attribut  de session couleur (à l'aide d'une commande php echo).) -->
-        <output name="result4">20</output>px
+        <output style="display: inline;" name="result4">20</output>px
     </div>
     <div style="display:block">
         Couleur de la peinture :
@@ -162,8 +227,25 @@ if(!isset($_SESSION['prenom'])) {
     <!-- à quoi servent ces champs hidden ?
         Ces champs servent à envoyer les commandes et le dessin dans la requête post-->
     <input type="hidden" id="picture" name="picture"/>
+    <label>Qui voulez vous défier ?</label>
+    <input list="destinataire" type="text" id="choix_destinataire" name="destinataire" required>
+    <datalist id="destinataire">
+        <?php foreach ($joueurs as $joueur) {
+            echo '<option value="'.$joueur[2].'"  >'.$joueur[0].' '.$joueur[1].'</option>';
+        }?>
+    </datalist>
+
     <input id="validate" type="submit" value="Valider"/>
 </form>
+
+<div id="pinceau_preview" style="
+        width: 40px;
+      height: 40px;
+      -webkit-border-radius: 25px;
+      -moz-border-radius: 25px;
+      border-radius: 25px;
+      background: red;
+" ></div>
 
 </body>
 </html>
@@ -172,6 +254,5 @@ if(!isset($_SESSION['prenom'])) {
 
 <!--
 TODO : curseur dans le canvas
-
 
 -->

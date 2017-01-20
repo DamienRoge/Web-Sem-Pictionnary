@@ -16,30 +16,29 @@ foreach($_POST as $item){
 $drawingCommands = $_POST['drawingCommands'];
 $picture = $_POST['picture'];
 $u_id = $_SESSION['id'];
+$u_id_destinataire = $_POST['destinataire'];
+$reponse = $_POST['reponse'];
 
-
+/* AJOUT DU DESSIN DANS LA BDD
+    avec le nom du destinataire et la reponse */
 
 
 try {
     // Connect to server and select database.
-    $dbh = new PDO('mysql:host=localhost:3306;dbname=pictionnary', 'test', 'test');
+    $xml_bdd_infos = simplexml_load_file('./config/BDD.xml');
+    $dbh = new PDO($xml_bdd_infos->type.':host='.$xml_bdd_infos->url.':'.$xml_bdd_infos->port.';dbname='.$xml_bdd_infos->dbname, $xml_bdd_infos->user, $xml_bdd_infos->password);
 
-    // Tenter d'inscrire l'utilisateur dans la base
-    $sql = $dbh->prepare("INSERT INTO drawings (u_id, picture, drawingcommands) "
-        . "VALUES (:u_id, :picture, :drawingcommands)");
+    $sql = $dbh->prepare("INSERT INTO drawings (u_id, picture, drawingcommands, u_id_destinataire, reponse, nb_tentatives, reussi,date) "
+        . "VALUES (:u_id, :picture, :drawingcommands, :u_id_destinataire, :reponse, 0,0, now())");
     $sql->bindValue(":u_id", $u_id, PDO::PARAM_INT);
     $sql->bindValue(":picture", $picture, PDO::PARAM_LOB);
     $sql->bindValue(":drawingcommands", $drawingCommands, PDO::PARAM_STR);
+    $sql->bindValue(":u_id_destinataire", $u_id_destinataire, PDO::PARAM_INT);
+    $sql->bindValue(":reponse", $reponse, PDO::PARAM_STR);
 
-    print_r($sql);
 
-    // de même, lier la valeur pour le mot de passe
-    // lier la valeur pour le nom, attention le nom peut être nul, il faut alors lier avec NULL, ou DEFAULT
-    // idem pour le prenom, tel, website, birthdate, ville, taille, profilepic
-    // n.b., notez: birthdate est au bon format ici, ce serait pas le cas pour un SGBD Oracle par exemple
-    // idem pour la couleur, attention au format ici (7 caractères, 6 caractères attendus seulement)
-    // idem pour le prenom, tel, website
-    // idem pour le sexe, attention il faut être sûr que c'est bien 'H', 'F', ou ''
+    header("Location: main.php");
+
 
     // on tente d'exécuter la requête SQL, si la méthode renvoie faux alors une erreur a été rencontrée.
     if (!$sql->execute()) {
@@ -54,6 +53,6 @@ try {
     $dbh = null;
     die();
 }
-        // Tenter d'inscrire l'utilisateur dans la base
+
 
 ?>
