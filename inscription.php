@@ -5,8 +5,10 @@
  * Date: 28/11/2016
  * Time: 13:34
  */
-
- include("header.php");
+session_start();
+if(isset($_SESSION['prenom'])) {
+    header("Location: main.php");
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -204,7 +206,7 @@ if (isset($_GET["erreur"])) {
             <label for="couleur">Couleur préféré :</label>
             <input type="color" value="#555555" name="couleur" id="couleur"  value="<?php
             if (isset($_GET["couleur"])) {
-                echo $_GET["couleur"];
+                echo "#"._GET["couleur"];
             }
             ?>"/>
 
@@ -216,11 +218,9 @@ if (isset($_GET["erreur"])) {
             <!-- l'input profilepic va contenir le chemin vers l'image sur l'ordinateur du client -->
             <!-- on ne veut pas envoyer cette info avec le formulaire, donc il n'y a pas d'attribut name -->
             <span class="form_hint">Choisissez une image.</span>
-            <input type="hidden" name="profilepic" id="profilepic"  value="<?php
-            if (isset($_GET["profilepic"])) {
-                echo "#".$_GET["profilepic"];
-            }
-            ?>"/>
+            <input type="hidden" id="profilepic" name="profilepic"  value="coucou"/>
+            <input type="hidden" id="maphoto" name="maphoto" value="coucou"/>
+
             <!-- l'input profilepic va contenir l'image redimensionnée sous forme d'une data url -->
             <!-- c'est cet input qui sera envoyé avec le formulaire, sous le nom profilepic -->
             <canvas id="preview" width="0" height="0"></canvas>
@@ -285,7 +285,10 @@ if (isset($_GET["erreur"])) {
                             // on exporte le contenu du canvas (l'image redimensionnée) sous la forme d'une data url
                             var dataurl = canvas.toDataURL("image/png");
                             // on donne finalement cette dataurl comme valeur au champs profilepic
+                            console.log("profilepic URI : " + dataurl);
+                            document.getElementById("maphoto").value = dataurl;
                             document.getElementById("profilepic").value = dataurl;
+
                         };
                     }
                     // on charge l'image pour de vrai, lorsque ce sera terminé le callback loadProfilePic sera appelé.
@@ -295,8 +298,11 @@ if (isset($_GET["erreur"])) {
         </li>
         <li>
             <input type="submit" value="Soumettre Formulaire">
+            <a href="login.php"> <input type="button" value="Annuler"></a>
+
         </li>
     </ul>
+
 </form>
 </body>
 </html>
