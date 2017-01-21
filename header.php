@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+if(!isset($_SESSION['id']) && basename($_SERVER['PHP_SELF'])!='login.php')
+    header("Location: login.php")/* Returns The Current PHP File Name */
+
 ?>
 <!DOCTYPE html>
 <html>
