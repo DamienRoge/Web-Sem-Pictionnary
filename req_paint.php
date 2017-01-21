@@ -37,7 +37,7 @@ try {
     $sql->bindValue(":reponse", $reponse, PDO::PARAM_STR);
 
 
-    header("Location: main.php");
+    //
 
 
     // on tente d'exécuter la requête SQL, si la méthode renvoie faux alors une erreur a été rencontrée.
@@ -46,7 +46,7 @@ try {
         $err = $sql->errorInfo();
         print_r($err);
     } else {
-
+        header("Location: main.php");
     }
 } catch (PDOException $e) {
     print "Erreur !: " . $e->getMessage() . "<br/>";
