@@ -55,7 +55,7 @@ include "header.php";
                 console.log(c.command);
                 // complétez todo
                 context.beginPath();
-                context.arc(c.x+emplacement_canvas.left,c.y-emplacement_canvas.top+40,size,0,Math.PI*2,true);
+                context.arc(c.x+emplacement_canvas.left,c.y-emplacement_canvas.top-10,size,0,Math.PI*2,true);
                 context.strokeStyle = color;
                 context.fillStyle = color;
                 context.fill();
@@ -107,6 +107,9 @@ include "header.php";
 <script>
     //Emplacement du canvas , permet de compenser la taille du header au moment de tracer le cercle
     var emplacement_canvas = document.getElementById("myCanvas").getBoundingClientRect();
+    console.log(emplacement_canvas.left);
+    console.log(emplacement_canvas.top);
+
 </script>
 
 
