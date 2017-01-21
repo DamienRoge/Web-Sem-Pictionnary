@@ -4,6 +4,7 @@ include("header.php");
 
 
 
+
 /* RECUPERATION DU MOT */
 
 $file_content = file_get_contents('./mots.txt', FILE_USE_INCLUDE_PATH);
@@ -228,12 +229,11 @@ try {
         Ces champs servent à envoyer les commandes et le dessin dans la requête post-->
     <input type="hidden" id="picture" name="picture"/>
     <label>Qui voulez vous défier ?</label>
-    <input list="destinataire" type="text" id="choix_destinataire" name="destinataire" required>
-    <datalist id="destinataire">
+    <select id="destinataire" name="destinataire" required>
         <?php foreach ($joueurs as $joueur) {
             echo '<option value="'.$joueur[2].'"  >'.$joueur[0].' '.$joueur[1].'</option>';
         }?>
-    </datalist>
+    </select>
 
     <input id="validate" type="submit" value="Valider"/>
 </form>
